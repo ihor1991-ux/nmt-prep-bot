@@ -1,35 +1,26 @@
-import sqlite3 from 'sqlite3';
+import Database from 'better-sqlite3';
 
 // Шлях до файлу бази даних
 const dbPath = './database.db';
-const db = new sqlite3.Database(dbPath);
+const db = new Database(dbPath);
 
-// Промісифікація методів для зручного використання async/await
+// Обгортки для синхронних методів better-sqlite3
 export const dbRun = (sql, params = []) => {
-  return new Promise((resolve, reject) => {
-    db.run(sql, params, function (err) {
-      if (err) reject(err);
-      else resolve(this); // this містить lastID та changes
-    });
-  });
+  const stmt = db.prepare(sql);
+  const info = stmt.run(...params);
+  return Promise.resolve(info); // Повертаємо Promise для сумісності з поточним кодом
 };
 
 export const dbGet = (sql, params = []) => {
-  return new Promise((resolve, reject) => {
-    db.get(sql, params, (err, row) => {
-      if (err) reject(err);
-      else resolve(row);
-    });
-  });
+  const stmt = db.prepare(sql);
+  const row = stmt.get(...params);
+  return Promise.resolve(row);
 };
 
 export const dbAll = (sql, params = []) => {
-  return new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => {
-      if (err) reject(err);
-      else resolve(rows);
-    });
-  });
+  const stmt = db.prepare(sql);
+  const rows = stmt.all(...params);
+  return Promise.resolve(rows);
 };
 
 // Ініціалізація таблиць бази даних

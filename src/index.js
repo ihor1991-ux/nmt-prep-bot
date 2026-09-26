@@ -10,13 +10,13 @@ async function main() {
     // 1. Ініціалізуємо базу даних
     await initDatabase();
 
-    // 2. Запускаємо Telegram-бота
-    // Використовуємо long polling для отримання повідомлень
-    bot.launch();
-    console.log('🤖 Telegram-бот успішно запущений!');
+    // 2. Налаштовуємо Webhook
+    const webhookUrl = `${process.env.SERVER_URL}/bot${process.env.TELEGRAM_TOKEN}`;
+    await bot.telegram.setWebhook(webhookUrl);
+    console.log('🤖 Telegram-бот успішно налаштований через Webhook!');
 
-    // 3. Запускаємо веб-сервер Express для вебхуків WayForPay
-    startServer();
+    // 3. Запускаємо веб-сервер Express
+    startServer(bot);
 
     // Налаштовуємо граційне завершення роботи при зупинці процесу (наприклад, Ctrl+C)
     process.once('SIGINT', () => {

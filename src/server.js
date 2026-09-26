@@ -62,9 +62,13 @@ app.post('/payment/callback', async (req, res) => {
 });
 
 // Функція запуску сервера Express
-export function startServer() {
+export function startServer(bot) {
+  // Додаємо обробку вебхука для Telegram
+  app.use(bot.webhookCallback(`/bot${process.env.TELEGRAM_TOKEN}`));
+
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`🌐 Веб-сервер запущено на порту ${PORT}`);
+    console.log(`🔗 Webhook Telegram: ${process.env.SERVER_URL || 'http://localhost:' + PORT}/bot${process.env.TELEGRAM_TOKEN}`);
     console.log(`🔗 Адреса для вебхуку WayForPay: ${process.env.SERVER_URL || 'http://localhost:' + PORT}/payment/callback`);
   });
 }
